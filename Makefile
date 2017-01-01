@@ -1,13 +1,32 @@
-CFLAGS = -msse2 --std gnu99 -O0 -Wall
+CC = gcc
+CFLAGS_common = --std gnu99 -O0 -Wall
+CFLAGS_sse = -msse2
+EXEC = native_transpose sse_transpose sse_prefetch_transpose
 
 GIT_HOOKS := .git/hooks/pre-commit
 
-all: $(GIT_HOOKS) main.c
-	$(CC) $(CFLAGS) -o main main.c
+
+all: native_transpose sse_transpose sse_prefetch_transpose
+
+
+#	$(CC) $(CFLAGS_common) $(CFLAGS_orig) \
+#		-DIMPL="\"$@.h\"" -o $@ \
+#		$(SRCS_common) $@.c
+native_transpose:
+	$(GIT_HOOKS) main.c
+	$(CC) $(CFLAGS_common) -DIMPL="\"$@.h\"" -o $@ main.c
+	echo $@
+sse_transpose:
+	$(GIT_HOOKS) main.c
+	$(CC) $(CFLAGS_common) $(CFLAGS_sse) -DIMPL="\"$@.h\"" -o $@ main.c
+sse_prefetch_transpose:
+	$(GIT_HOOKS) main.c
+	$(CC) $(CFLAGS_common) $(CFLAGS_sse) -DIMPL="\"$@.h\"" -o $@ main.c
+
 
 $(GIT_HOOKS):
 	@scripts/install-git-hooks
 	@echo
 
 clean:
-	$(RM) main
+	$(RM) $(EXEC)
