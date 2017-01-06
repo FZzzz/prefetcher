@@ -1,7 +1,8 @@
 CC = gcc
 CFLAGS_common = --std gnu99 -O0 -Wall
 CFLAGS_sse = -msse2
-EXEC = native_transpose sse_transpose sse_prefetch_transpose
+CFLAGS_avx = -mavx2
+EXEC = native_transpose sse_transpose sse_prefetch_transpose avx_transpose
 
 GIT_HOOKS := .git/hooks/pre-commit
 
@@ -23,6 +24,9 @@ sse_prefetch_transpose:
 	$(GIT_HOOKS) main.c
 	$(CC) $(CFLAGS_common) $(CFLAGS_sse) -DIMPL="\"$@.h\"" -o $@ main.c
 
+avx_transpose: 
+	$(GIT_HOOKS) main.c
+	$(CC) $(CFLAGS_common) $(CFLAGS_avx) -DIMPL="\"$@.h\"" -o $@ main.c
 
 $(GIT_HOOKS):
 	@scripts/install-git-hooks
